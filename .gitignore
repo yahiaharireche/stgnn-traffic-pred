@@ -7,8 +7,6 @@ bin/
 default.npy
 runs/
 *.pt
-dataset/processed
-dataset/raw
 .DS_Store
 dataset/.DS_Store
 raw/
