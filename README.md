@@ -1,57 +1,79 @@
-# Spatial-Temporal Graph Attention Networks:A Deep Learning Approach for Traffic Forecasting
+Spatio-Temporal Graph Attention Networks for Traffic Forecasting
 
-This repository provides an open source implementation of the Spatio-Temporal GAT introduced by Zhang et al in "Spatial-Temporal Graph Attention Networks:A Deep Learning Approach for Traffic Forecasting" https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8903252
+This repository implements a Spatio-Temporal Graph Attention Network (ST-GAT) for short-term traffic forecasting, adapted from the framework proposed by:
 
-## Running the code
+Bing Yu, Haoteng Yin, and Zhanxing Zhu.
+Spatio-Temporal Graph Convolutional Networks: A Deep Learning Framework for Traffic Forecasting.
+IJCAI 2018.
 
-We recommend creating and activating a virtual environment to run this repo. Use the following steps:
-```
-python3 -m venv env
-source env/bin/activate
-python3 -m pip install -r requirements.txt
-```
+Overview
 
-To start training, simple run:
-```
-python3 main.py
-```
+The project predicts future traffic speeds using data from the PeMSD7 dataset.
+It models:
 
-We also provide `.launch` files in the `.vscode` folder for launching main through the python debugger.
+Spatial dependencies between road sensors using graph attention mechanisms.
 
-## Folder structure
+Temporal dynamics through historical time windows.
 
-Dataloading and preprocessed datasets are available in `data_loader` and `dataset`. The model is available in `models/st_gat.py`. Training functions are provided in `models/trainer.py`.
-```
-├── data_loader
-│   ├── dataloader.py
-│   └── __init__.py
-├── dataset
-│   ├── PeMSD7_V_228.csv
-│   └── PeMSD7_W_228.csv
-├── models
-│   ├── __init__.py
-│   ├── st_gat.py
-│   └── trainer.py
-├── runs
-│   ├── model_final_200epochs.pt
-│   └── model_final_60epochs.pt
-├── utils
-│   ├── __init__.py
-|   └── math_utils.py
-├── main.py
-├── requirements.txt
-└── README.md
-```
+Repository Structure
+├── data_loader/
+│   ├── dataloader.py       # Creates spatio-temporal graph datasets
+│   └── st_dat.py
+├── models/
+│   ├── st_gat.py           # ST-GAT model definition
+│   └── trainer.py          # Training, evaluation, visualization
+├── utils/
+│   └── math_utils.py       # Normalization and metrics
+├── dataset/
+│   ├── PeMSD7_V_228.csv    # Traffic speed data
+│   └── PeMSD7_W_228.csv    # Distance matrix
+└── main.py                 # Entry point for training and evaluation
+
+Configuration
+
+Model and data parameters are defined in main.py:
+
+config = {
+    'BATCH_SIZE': 50,
+    'EPOCHS': 50,
+    'INITIAL_LR': 3e-4,
+    'N_PRED': 9,
+    'N_HIST': 12,
+    'SPLITS': (34, 5, 5),
+    'USE_GAT_WEIGHTS': True,
+}
+
+Usage
+1. Install Dependencies
+pip install torch torch-geometric pandas numpy matplotlib tqdm
+
+2. Prepare Dataset
+
+Place PeMSD7_V_228.csv and PeMSD7_W_228.csv in the dataset/ folder.
+
+3. Run
+python main.py
 
 
-## Citation
-This repository was based on that provided by Bing Yu*, Haoteng Yin*, Zhanxing Zhu. [Spatio-temporal Graph Convolutional Networks: A Deep Learning Framework for Traffic Forecasting](https://www.ijcai.org/proceedings/2018/0505). In *Proceedings of the 27th International Joint Conference on Artificial Intelligence (IJCAI)*, 2018
+The script trains the ST-GAT model and generates a plot (predictions_improved.png) comparing predicted and actual traffic speeds.
 
-    @inproceedings{yu2018spatio,
-        title={Spatio-temporal Graph Convolutional Networks: A Deep Learning Framework for Traffic Forecasting},
-        author={Yu, Bing and Yin, Haoteng and Zhu, Zhanxing},
-        booktitle={Proceedings of the 27th International Joint Conference on Artificial Intelligence (IJCAI)},
-        year={2018}
-    }
+Evaluation
 
-The model architecture came from C. Zhang, J. J. Q. Yu and Y. Liu, “Spatial-Temporal Graph Attention Networks: A Deep Learning Approach for Traffic Forecasting,” in IEEE Access, vol. 7, pp. 166246–166256, 2019, doi: 10.1109/ACCESS.2019.2953888
+Performance is reported using:
+
+MAE – Mean Absolute Error
+
+RMSE – Root Mean Square Error
+
+MAPE – Mean Absolute Percentage Error
+
+Example output:
+
+[Val] MAE: 3.21, RMSE: 5.81, MAPE: 7.2%
+[Test] MAE: 3.15, RMSE: 5.63, MAPE: 6.9%
+
+Reference
+
+Bing Yu, Haoteng Yin, and Zhanxing Zhu.
+Spatio-Temporal Graph Convolutional Networks: A Deep Learning Framework for Traffic Forecasting.
+Proceedings of the 27th International Joint Conference on Artificial Intelligence (IJCAI), 2018.
